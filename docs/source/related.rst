@@ -25,10 +25,10 @@ xtensor-python
 
 The xtensor-python_ project provides the implementation of container types
 compatible with *xtensor*'s expression system, ``pyarray`` and ``pytensor``
-which effectively wrap numpy arrays, allowing operating on numpy arrays
+which effectively wrap NumPy arrays, allowing operating on NumPy arrays
 in-place.
 
-Example 1: Use an algorithm of the C++ library on a numpy array in-place
+Example 1: Use an algorithm of the C++ library on a NumPy array in-place
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 **C++ code**
@@ -37,9 +37,9 @@ Example 1: Use an algorithm of the C++ library on a numpy array in-place
 
     #include <numeric>                        // Standard library import for std::accumulate
     #include <pybind11/pybind11.h>            // Pybind11 import to define Python bindings
-    #include <xtensor/xmath.hpp>              // xtensor import for the C++ universal functions
-    #define FORCE_IMPORT_ARRAY                // numpy C api loading
-    #include <xtensor-python/pyarray.hpp>     // Numpy bindings
+    #include <xtensor/core/xmath.hpp>         // xtensor import for the C++ universal functions
+    #define FORCE_IMPORT_ARRAY                // NumPy C api loading
+    #include <xtensor-python/pyarray.hpp>     // NumPy bindings
 
     double sum_of_sines(xt::pyarray<double> &m)
     {
@@ -144,7 +144,7 @@ It takes care of the initial work of generating a project skeleton with
 A few examples included in the resulting project including
 
 - A universal function defined from C++
-- A function making use of an algorithm from the STL on a numpy array
+- A function making use of an algorithm from the STL on a NumPy array
 - Unit tests
 - The generation of the HTML documentation with sphinx
 
@@ -169,7 +169,7 @@ Example 1: Use an algorithm of the C++ library with a Julia array
     #include <numeric>                        // Standard library import for std::accumulate
     #include <cxx_wrap.hpp>                   // CxxWrap import to define Julia bindings
     #include <xtensor-julia/jltensor.hpp>     // Import the jltensor container definition
-    #include <xtensor/xmath.hpp>              // xtensor import for the C++ universal functions
+    #include <xtensor/core/xmath.hpp>         // xtensor import for the C++ universal functions
 
     double sum_of_sines(xt::jltensor<double, 2> m)
     {
@@ -200,7 +200,7 @@ Example 1: Use an algorithm of the C++ library with a Julia array
 
    1.2853996391883833
 
-Example 2: Create a numpy-style universal function from a C++ scalar function
+Example 2: Create a NumPy-style universal function from a C++ scalar function
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 **C++ code**
@@ -257,8 +257,8 @@ It takes care of the initial work of generating a project skeleton with
 
 A few examples included in the resulting project including
 
-- A numpy-style universal function defined from C++
-- A function making use of an algorithm from the STL on a numpy array
+- A NumPy-style universal function defined from C++
+- A function making use of an algorithm from the STL on a NumPy array
 - Unit tests
 - The generation of the HTML documentation with sphinx
 
@@ -280,7 +280,7 @@ Example 1: Use an algorithm of the C++ library on a R array in-place
 .. code::
 
     #include <numeric>                    // Standard library import for std::accumulate
-    #include <xtensor/xmath.hpp>          // xtensor import for the C++ universal functions
+    #include <xtensor/core/xmath.hpp>     // xtensor import for the C++ universal functions
     #include <xtensor-r/rarray.hpp>       // R bindings
     #include <Rcpp.h>
 
@@ -318,7 +318,7 @@ xtensor-blas
 The xtensor-blas_ project is an extension to the xtensor library, offering
 bindings to BLAS and LAPACK libraries through cxxblas and cxxlapack from the
 FLENS project. ``xtensor-blas`` powers the ``xt::linalg`` functionalities,
-which are the counterpart to numpy's ``linalg`` module.
+which are the counterpart to NumPy's ``linalg`` module.
 
 xtensor-fftw
 ------------
@@ -328,7 +328,7 @@ xtensor-fftw
 
 The xtensor-fftw_ project is an extension to the xtensor library, offering
 bindings to the fftw library.  ``xtensor-fftw`` powers the ``xt::fftw``
-functionalities, which are the counterpart to numpy's ``fft`` module.
+functionalities, which are the counterpart to NumPy's ``fft`` module.
 
 Example 1: Calculate a derivative in Fourier space
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -339,13 +339,13 @@ Calculate the derivative of a (discretized) field in Fourier space, e.g. a sine 
 
 .. code::
 
-    #include <xtensor-fftw/basic.hpp>   // rfft, irfft
-    #include <xtensor-fftw/helper.hpp>  // rfftscale
-    #include <xtensor/xarray.hpp>
-    #include <xtensor/xbuilder.hpp>     // xt::arange
-    #include <xtensor/xmath.hpp>        // xt::sin, cos
+    #include <xtensor-fftw/basic.hpp>          // rfft, irfft
+    #include <xtensor-fftw/helper.hpp>         // rfftscale
+    #include <xtensor/containers/xarray.hpp>
+    #include <xtensor/generators/xbuilder.hpp> // xt::arange
+    #include <xtensor/core/xmath.hpp>          // xt::sin, cos
     #include <complex>
-    #include <xtensor/xio.hpp>
+    #include <xtensor/io/xio.hpp>
 
     // generate a sinusoid field
     double dx = M_PI / 100;
@@ -453,12 +453,12 @@ and also provides a python wrapper based on ``xtensor-python``.
 .. _xtensor-r: https://github.com/xtensor-stack/xtensor-r
 .. _xtensor-blas: https://github.com/xtensor-stack/xtensor-blas
 .. _xtensor-io: https://github.com/xtensor-stack/xtensor-io
-.. _xtensor-fftw: https://github.com/egpbos/xtensor-fftw
-.. _xtensor-ros: https://github.com/wolfv/xtensor_ros
+.. _xtensor-fftw: https://github.com/xtensor-stack/xtensor-fftw
+.. _xtensor-ros: https://github.com/RoboStack/xtensor-ros
 .. _xsimd: https://github.com/xtensor-stack/xsimd
 .. _xtl: https://github.com/xtensor-stack/xtl
 .. _xframe: https://github.com/xtensor-stack/xframe
 .. _z5: https://github.com/constantinpape/z5
-.. _zarr: https://github.com/zarr-developers/zarr
-.. _n5: https://github.com/saalfeldlab/n5i
-.. _xarray: http://xarray.pydata.org
+.. _zarr: https://github.com/zarr-developers/zarr-python
+.. _n5: https://github.com/saalfeldlab/n5
+.. _xarray: https://docs.xarray.dev/en/stable/

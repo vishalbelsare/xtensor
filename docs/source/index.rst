@@ -25,8 +25,8 @@ Containers of *xtensor* are inspired by `NumPy`_, the Python array programming
 library. **Adaptors** for existing data structures to be plugged into the
 expression system can easily be written.
 
-In fact, *xtensor* can be used to **process numpy data structures in-place**
-using Python's `buffer protocol`_. For more details on the numpy bindings,
+In fact, *xtensor* can be used to **process NumPy data structures in-place**
+using Python's `buffer protocol`_. For more details on the NumPy bindings,
 check out the xtensor-python_ project. Language bindings for R and Julia are
 also available.
 
@@ -98,7 +98,7 @@ for details.
    api/function_index
    api/io_index
    api/xmath
-   api/xshape
+   api/shape
 
 .. toctree::
    :caption: DEVELOPER ZONE
@@ -119,7 +119,7 @@ for details.
    related
    bindings
 
-.. _NumPy: http://www.numpy.org
+.. _NumPy: https://numpy.org/
 .. _Buffer Protocol: https://docs.python.org/3/c-api/buffer.html
 .. _libdynd: http://libdynd.org
 .. _xtensor-python: https://github.com/xtensor-stack/xtensor-python

@@ -18,8 +18,9 @@ html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
 def setup(app):
     app.add_css_file("main_stylesheet.css")
 
-extensions = ['breathe']
+extensions = ['breathe', 'sphinx_rtd_theme']
 breathe_projects = { 'xtensor': '../xml' }
+breathe_default_project = "xtensor"
 templates_path = ['_templates']
 html_static_path = ['_static']
 source_suffix = '.rst'
@@ -40,7 +41,7 @@ html_js_files = [
     'goatcounter.js'
 ]
 
-# Automatically link to numpy doc
+# Automatically link to NumPy doc
 extensions += ['sphinx.ext.intersphinx']
 intersphinx_mapping = {
     "numpy": ("https://numpy.org/doc/stable/", None),

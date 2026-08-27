@@ -90,7 +90,7 @@ Broadcasting
 
 The number of dimensions of an :cpp:type:`xt::xexpression` and the sizes of these dimensions are provided by the :cpp:func:`~xt::xexpression::shape` method, which returns a sequence of unsigned integers
 specifying the size of each dimension. We can operate on expressions of different shapes of dimensions in an elementwise fashion.
-Broadcasting rules of *xtensor* are similar to those of Numpy_ and libdynd_.
+Broadcasting rules of *xtensor* are similar to those of NumPy_ and libdynd_.
 
 In an operation involving two arrays of different dimensions, the array with the lesser dimensions is broadcast across the leading dimensions of the other.
 For example, if ``A`` has shape ``(2, 3)``, and ``B`` has shape ``(4, 2, 3)``, the result of a broadcast operation with ``A`` and ``B`` has shape ``(4, 2, 3)``.
@@ -128,7 +128,7 @@ You can access the elements of any :cpp:type:`xt::xexpression` with :cpp:func:`~
 
 .. code::
 
-    #include <xtensor/xarray.hpp>
+    #include <xtensor/containers/xarray.hpp>
 
     xt::xarray<double> a = {{1., 2., 3.}, {4., 5., 6.}};
     auto f = 2 * a;
@@ -145,7 +145,7 @@ of the expression:
 
 .. code::
 
-    #include <xtensor/xarray.hpp>
+    #include <xtensor/containers/xarray.hpp>
 
     xt::xarray<double> a = {{1., 2., 3.}, {4., 5., 6.}};
 
@@ -169,7 +169,7 @@ Shape
 .. code::
 
     #include <vector>
-    #include <xtensor/xarray.hpp>
+    #include <xtensor/containers/xarray.hpp>
 
     using array_type = xt::xarray<double>;
     using shape_type = array_type::shape_type;
@@ -199,7 +199,7 @@ Element access
 .. code::
 
     #include <vector>
-    #inclde "xtensor/xarray.hpp"
+    #inclde "xtensor/containers/xarray.hpp"
 
     // xt::xarray<double> a = ...
     std::vector<size_t> index = {1, 1, 1};
@@ -232,5 +232,5 @@ Iterators
   :cpp:func:`begin(shape) <xt::xiterator xt::xexpression::begin(xt::xshape)>` and
   :cpp:func:`end(shape) <xiterator xt::xexpression::end(xt::xshape)>`.
 
-.. _NumPy: http://www.numpy.org
+.. _NumPy: https://numpy.org/
 .. _libdynd: http://libdynd.org

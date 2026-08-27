@@ -17,7 +17,7 @@ the chunks fit comfortably in memory, but this also allows to process them in
 parallel, including in a distributed environment (although this is not supported
 yet).
 
-Formats for the storage of arrays such as `Zarr <https://zarr.readthedocs.io>`_
+Formats for the storage of arrays such as `Zarr <https://zarr.readthedocs.io/en/stable/>`_
 specifically target chunked arrays. Such formats are becoming increasingly
 popular in the field of big data, since the chunks can be stored in the cloud.
 
@@ -33,7 +33,7 @@ An in-memory chunked array has the following type:
 
 .. code::
 
-    #include <xtensor/xchunked_array.hpp>
+    #include <xtensor/chunk/xchunked_array.hpp>
 
     using data_type = double;
     // don't use this code:
@@ -44,7 +44,7 @@ use the ``chunked_array`` factory function:
 
 .. code::
 
-    #include <xtensor/xchunked_array.hpp>
+    #include <xtensor/chunk/xchunked_array.hpp>
 
     std::vector<std::size_t> shape = {10, 10, 10};
     std::vector<std::size_t> chunk_shape = {2, 3, 4};
@@ -65,5 +65,5 @@ These are arrays whose chunks are stored on a file system, allowing for
 persistence of data. In particular, they are used as a building block for the
 `xtensor-zarr <https://github.com/xtensor-stack/xtensor-zarr>`_ library.
 
-For further dedails, please refer to the documentation
-of `xtensor-io <https://xtensor-io.readthedocs.io>`_.
+For further details, please refer to the documentation
+of `xtensor-io <https://xtensor-io.readthedocs.io/en/latest/>`_.

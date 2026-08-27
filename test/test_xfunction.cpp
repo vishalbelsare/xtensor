@@ -1,19 +1,21 @@
 /***************************************************************************
-* Copyright (c) Johan Mabille, Sylvain Corlay and Wolf Vollprecht          *
-* Copyright (c) QuantStack                                                 *
-*                                                                          *
-* Distributed under the terms of the BSD 3-Clause License.                 *
-*                                                                          *
-* The full license is in the file LICENSE, distributed with this software. *
-****************************************************************************/
+ * Copyright (c) Johan Mabille, Sylvain Corlay and Wolf Vollprecht          *
+ * Copyright (c) QuantStack                                                 *
+ *                                                                          *
+ * Distributed under the terms of the BSD 3-Clause License.                 *
+ *                                                                          *
+ * The full license is in the file LICENSE, distributed with this software. *
+ ****************************************************************************/
 
-#include "test_common_macros.hpp"
-#include "xtensor/xarray.hpp"
-#include "xtensor/xview.hpp"
+#include "xtensor/containers/xarray.hpp"
+#include "xtensor/containers/xfixed.hpp"
+#include "xtensor/containers/xtensor.hpp"
+#include "xtensor/core/xvectorize.hpp"
+#include "xtensor/generators/xrandom.hpp"
+#include "xtensor/views/xview.hpp"
+
 #include "test_common.hpp"
-#include "xtensor/xtensor.hpp"
-#include "xtensor/xrandom.hpp"
-#include "xtensor/xfixed.hpp"
+#include "test_common_macros.hpp"
 
 namespace xt
 {
@@ -57,16 +59,16 @@ namespace xt
         }
     }
 
-    template<typename E>
+    template <typename E>
     auto normalize(E&& expr)
     {
-        return E{ expr } / xt::view(xt::sum(E{ expr }, { 1 }), xt::all(), xt::newaxis());
+        return E{expr} / xt::view(xt::sum(E{expr}, {1}), xt::all(), xt::newaxis());
     }
 
     TEST(xfunction, copy_constructor)
     {
-        xt::xarray<double> freqs({ 10, 5 }, 1);
-        xt::xarray<double> other_freqs({ 10, 5 }, 2);
+        xt::xarray<double> freqs({10, 5}, 1);
+        xt::xarray<double> other_freqs({10, 5}, 2);
         // Compilation test
         xarray<double> probs = normalize(freqs + other_freqs);
     }
@@ -103,8 +105,8 @@ namespace xt
 
     TEST(xfunction, broadcast_shape_exception)
     {
-        xt::xarray<double> arr1{ { 1.0, 2.0, 3.0 } };
-        xt::xarray<double> arr2{ 5.0, 6.0, 7.0, 99.0 };
+        xt::xarray<double> arr1{{1.0, 2.0, 3.0}};
+        xt::xarray<double> arr2{5.0, 6.0, 7.0, 99.0};
         XT_EXPECT_ANY_THROW(xt::xarray<double> res = arr1 * arr2);
     }
 
@@ -113,7 +115,7 @@ namespace xt
         xfunction_features f;
         auto func = f.m_a + f.m_c;
         const auto& sh = func.shape();
-        for(std::size_t i = 0; i < sh.size(); ++i)
+        for (std::size_t i = 0; i < sh.size(); ++i)
         {
             EXPECT_EQ(sh[i], func.shape(i));
         }
@@ -189,6 +191,21 @@ namespace xt
             int a = (f.m_a + f.m_c)(1, i, j, k);
             int b = f.m_a(i, j, k) + f.m_c(1, i, j, k);
             EXPECT_EQ(a, b);
+        }
+    }
+
+    TEST(xfunction, access_dangling_reference)
+    {
+        auto values_original = xt::xtensor<double, 1>{1., 2., 3.};
+        auto indexes = xt::arange<size_t>(values_original.size());
+        auto map = [&](const size_t& index) -> auto&
+        {
+            return values_original[index];
+        };
+        auto values_mapped = xt::vectorize(map)(indexes);
+        for (size_t i = 0; i < values_original.size(); ++i)
+        {
+            EXPECT_TRUE(&(values_mapped[i]) == &(values_original[i]));
         }
     }
 
@@ -433,13 +450,17 @@ namespace xt
         auto res5 = func;
 
         auto resit1 = res1.template begin<XTENSOR_DEFAULT_LAYOUT>();
-        for (auto it = func.template begin<XTENSOR_DEFAULT_LAYOUT>(); it != func.template end<XTENSOR_DEFAULT_LAYOUT>(); ++it)
+        for (auto it = func.template begin<XTENSOR_DEFAULT_LAYOUT>();
+             it != func.template end<XTENSOR_DEFAULT_LAYOUT>();
+             ++it)
         {
             *(resit1++) = *it;
         }
 
         auto resit3 = res3.template rbegin<XTENSOR_DEFAULT_LAYOUT>();
-        for (auto it = func.template rbegin<XTENSOR_DEFAULT_LAYOUT>(); it != func.template rend<XTENSOR_DEFAULT_LAYOUT>(); ++it)
+        for (auto it = func.template rbegin<XTENSOR_DEFAULT_LAYOUT>();
+             it != func.template rend<XTENSOR_DEFAULT_LAYOUT>();
+             ++it)
         {
             *(resit3++) = *it;
         }
@@ -475,32 +496,23 @@ namespace xt
         auto f1 = 2.0 * x;
         auto f2 = x * 2.0 * x;
         iterator_tester(f1);
-// For an unknown reason, MSVC cannot correctly generate
-// linear_cbegin() for a function of function. Moreover,
-// a simple SFINAE deduction like has_linear_iterator
-// harcoded and tested here fails (while it builds fine in any
-// empty project)
-#ifndef _MSC_VER
         iterator_tester(f2);
         iterator_tester(x * y * 3.0);
         iterator_tester(5.0 + x * y * 3.0);
         iterator_tester(x * y * z);
         iterator_tester(x / y / z);
-#endif
     }
 
-#ifndef _MSC_VER
     TEST(xfunction, xfunction_in_xfunction)
     {
         using Point3 = xt::xtensor_fixed<double, xshape<3>>;
-        Point3 a1({1.,2.,3.});
-        Point3 a2({3.,1.,3.});
-        Point3 a3({54.,5.,5.});
+        Point3 a1({1., 2., 3.});
+        Point3 a2({3., 1., 3.});
+        Point3 a3({54., 5., 5.});
         xtensor<Point3, 1> a({a1, a2, a3});
         xtensor<Point3, 1> c = a + a;
         Point3 r1({2., 4., 6.}), r2({6., 2., 6.}), r3({108., 10., 10.});
         xtensor<Point3, 1> res{r1, r2, r3};
         EXPECT_EQ(c, res);
     }
-#endif
 }

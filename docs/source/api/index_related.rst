@@ -7,16 +7,9 @@
 Index related functions
 =======================
 
-Defined in ``xtensor/xoperation.hpp``
+Defined in ``xtensor/core/xoperation.hpp``
 
-.. doxygenfunction:: where(const T&)
-   :project: xtensor
+The logical operator group documents the index-producing overloads of
+``xt::where``, ``xt::nonzero`` and ``xt::argwhere``.
 
-.. doxygenfunction:: nonzero(const T&)
-   :project: xtensor
-
-.. doxygenfunction:: argwhere
-   :project: xtensor
-
-.. doxygenfunction:: from_indices
-   :project: xtensor
+``xt::from_indices`` is documented on the ``xtensor`` API page.

@@ -1,11 +1,11 @@
 /***************************************************************************
-* Copyright (c) Johan Mabille, Sylvain Corlay and Wolf Vollprecht          *
-* Copyright (c) QuantStack                                                 *
-*                                                                          *
-* Distributed under the terms of the BSD 3-Clause License.                 *
-*                                                                          *
-* The full license is in the file LICENSE, distributed with this software. *
-****************************************************************************/
+ * Copyright (c) Johan Mabille, Sylvain Corlay and Wolf Vollprecht          *
+ * Copyright (c) QuantStack                                                 *
+ *                                                                          *
+ * Distributed under the terms of the BSD 3-Clause License.                 *
+ *                                                                          *
+ * The full license is in the file LICENSE, distributed with this software. *
+ ****************************************************************************/
 #if defined(_MSC_VER) && !defined(__clang__)
 #define VS_SKIP_XFIXED 1
 #endif
@@ -15,14 +15,15 @@
 #ifndef VS_SKIP_XFIXED
 
 
-#if (_MSC_VER < 1910 && _WIN64) || (_MSC_VER >= 1910 && !defined(DISABLE_VS2017)) || !defined(_MSC_VER)
+#if (_MSC_VER < 1910 && _WIN64) || (_MSC_VER >= 1910) || !defined(_MSC_VER)
 
 #include <complex>
 #include <limits>
 
+#include "xtensor/containers/xfixed.hpp"
+#include "xtensor/core/xtensor_config.hpp"
+
 #include "test_common_macros.hpp"
-#include "xtensor/xfixed.hpp"
-#include "xtensor/xtensor_config.hpp"
 
 // On VS2015, when compiling in x86 mode, alignas(T) leads to C2718
 // when used for a function parameter, even indirectly. This means that
@@ -40,11 +41,13 @@ class alignas(XTENSOR_FIXED_ALIGN) Foo
 {
 public:
 
-    using allocator_type = std::conditional_t<XTENSOR_FIXED_ALIGN != 0,
-                                              xt_simd::aligned_allocator<T, XTENSOR_FIXED_ALIGN>,
-                                              std::allocator<T>>;
+    using allocator_type = std::conditional_t<
+        XTENSOR_FIXED_ALIGN != 0,
+        xt_simd::aligned_allocator<T, XTENSOR_FIXED_ALIGN>,
+        std::allocator<T>>;
 
-    Foo(T fac) : m_fac(fac)
+    Foo(T fac)
+        : m_fac(fac)
     {
         m_bar.fill(fac);
     }
@@ -72,4 +75,4 @@ namespace xt
 }
 
 #endif
-#endif // VS_SKIP_XFIXED
+#endif  // VS_SKIP_XFIXED

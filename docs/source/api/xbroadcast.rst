@@ -7,11 +7,9 @@
 xbroadcast
 ==========
 
-Defined in ``xtensor/xbroadcast.hpp``
+Defined in ``xtensor/views/xbroadcast.hpp``
 
 .. doxygenclass:: xt::xbroadcast
-   :project: xtensor
    :members:
 
 .. doxygenfunction:: xt::broadcast(E&&, const S&)
-   :project: xtensor

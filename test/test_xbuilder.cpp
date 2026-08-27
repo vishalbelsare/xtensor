@@ -1,24 +1,25 @@
 /***************************************************************************
-* Copyright (c) Johan Mabille, Sylvain Corlay and Wolf Vollprecht          *
-* Copyright (c) QuantStack                                                 *
-*                                                                          *
-* Distributed under the terms of the BSD 3-Clause License.                 *
-*                                                                          *
-* The full license is in the file LICENSE, distributed with this software. *
-****************************************************************************/
+ * Copyright (c) Johan Mabille, Sylvain Corlay and Wolf Vollprecht          *
+ * Copyright (c) QuantStack                                                 *
+ *                                                                          *
+ * Distributed under the terms of the BSD 3-Clause License.                 *
+ *                                                                          *
+ * The full license is in the file LICENSE, distributed with this software. *
+ ****************************************************************************/
 
 #ifdef _MSC_VER
 #define VS_SKIP_CONCATENATE_FIXED 1
 #endif
 
-#include "test_common.hpp"
-#include "xtensor/xbuilder.hpp"
-#include "xtensor/xarray.hpp"
-#include "xtensor/xtensor.hpp"
-#include "xtensor/xfixed.hpp"
-
-#include "xtensor/xio.hpp"
 #include <sstream>
+
+#include "xtensor/containers/xarray.hpp"
+#include "xtensor/containers/xfixed.hpp"
+#include "xtensor/containers/xtensor.hpp"
+#include "xtensor/generators/xbuilder.hpp"
+#include "xtensor/io/xio.hpp"
+
+#include "test_common.hpp"
 
 namespace xt
 {
@@ -42,7 +43,7 @@ namespace xt
     TEST(xbuilder, like)
     {
         bool type_equal = false;
-        auto arr = xarray<int>::from_shape({3,2,5});
+        auto arr = xarray<int>::from_shape({3, 2, 5});
         auto xfx = xtensor_fixed<int, xt::xshape<3, 3, 3>>();
 
         auto onas = ones_like(arr);
@@ -158,11 +159,11 @@ namespace xt
         ASSERT_EQ(m_assigned(10), 15.f);
         ASSERT_EQ(m_assigned(3), 11.5f);
 
-        auto l3 = arange<float>(0, 1, 0.3f);
+        auto l3 = arange<float>(0, 0.99f, 0.25f);
         decltype(l3)::shape_type expected_shape_2 = {4};
         ASSERT_EQ(l3.shape(), expected_shape_2);
         ASSERT_EQ(l3[{0}], 0.f);
-        ASSERT_EQ(3.f * 0.3f, l3[{3}]);
+        ASSERT_EQ(0.25f * 3.f, l3[{3}]);
 
         auto l4 = arange<int>(0, 10, 3);
         ASSERT_EQ(l4.shape(), expected_shape_2);
@@ -370,10 +371,10 @@ namespace xt
 
         auto t = concatenate(xtuple(arange(2), arange(2, 5), arange(5, 8)));
         ASSERT_TRUE(arange(8) == t);
-        
-        xt::xarray<double> fa = xt::ones<double>({ 3, 4, 5, 0 });
-        xt::xarray<double> sa = xt::ones<double>({ 3, 4, 5 });
-        xt::xarray<double> ta = xt::ones<double>({ 3, 4, 5, 3 });
+
+        xt::xarray<double> fa = xt::ones<double>({3, 4, 5, 0});
+        xt::xarray<double> sa = xt::ones<double>({3, 4, 5});
+        xt::xarray<double> ta = xt::ones<double>({3, 4, 5, 3});
 
         XT_EXPECT_ANY_THROW(xt::concatenate(xt::xtuple(fa, sa)));
         XT_EXPECT_ANY_THROW(xt::concatenate(xt::xtuple(fa, ta)));
@@ -423,11 +424,26 @@ namespace xt
         ASSERT_TRUE(arange(8) == w1);
         ASSERT_TRUE(w1 == w2);
     }
+
+    TEST(xbuilder, vstack_fixed)
+    {
+        xtensor_fixed<float, fixed_shape<1, 2>> a = {{1.f, 2.f}};
+        xtensor_fixed<float, fixed_shape<2, 2>> b = {{3.f, 4.f}, {5.f, 6.f}};
+
+        auto c = vstack(xtuple(a, b));
+
+        using expected_shape_t = fixed_shape<3, 2>;
+        ASSERT_EQ(expected_shape_t{}, c.shape());
+        EXPECT_EQ(1.f, c(0, 0));
+        EXPECT_EQ(2.f, c(0, 1));
+        EXPECT_EQ(3.f, c(1, 0));
+        EXPECT_EQ(6.f, c(2, 1));
+    }
 #endif
 
     TEST(xbuilder, access)
     {
-        xarray<double> a = { { { 0, 1, 2 },{ 3, 4, 5 } },{ { 6, 7, 8 },{ 9, 10, 11 } } };
+        xarray<double> a = {{{0, 1, 2}, {3, 4, 5}}, {{6, 7, 8}, {9, 10, 11}}};
         auto c = concatenate(xtuple(a, a, a), 2);
         EXPECT_EQ(c(2, 3, 1, 1, 2), c(1, 1, 2));
     }
@@ -452,7 +468,7 @@ namespace xt
         ASSERT_EQ(11, c(1, 1, 1, 2));
         ASSERT_EQ(11, c(1, 1, 2, 2));
 
-        auto e = arange(1, 4);
+        xarray<double> e = arange(1, 4);
         xarray<double> f = {2, 3, 4};
         xarray<double> k = stack(xtuple(e, f));
         xarray<double> l = stack(xtuple(e, f), 1);
@@ -486,7 +502,7 @@ namespace xt
         auto c1 = hstack(xtuple(a1, b1));
         EXPECT_EQ(c1, e1);
 
-        xarray<int> a2 = {{1, 2, 3}, {4, 5 ,6}};
+        xarray<int> a2 = {{1, 2, 3}, {4, 5, 6}};
         xarray<int> b2 = {{7, 8}, {9, 10}};
         xarray<int> e2 = {{1, 2, 3, 7, 8}, {4, 5, 6, 9, 10}};
         auto c2 = hstack(xtuple(a2, b2));
@@ -504,14 +520,14 @@ namespace xt
         a1.reshape({3, 1});
         xarray<int> b1 = b0;
         b1.reshape({3, 1});
-        xarray<int> e1 = { 1, 2, 3, 2, 3, 4 };
+        xarray<int> e1 = {1, 2, 3, 2, 3, 4};
         e1.reshape({6, 1});
         auto c1 = vstack(xtuple(a1, b1));
         EXPECT_EQ(c1, e1);
 
-        xarray<int> a2 = {{1, 2, 3}, {4, 5 ,6}, {7, 8, 9}};
+        xarray<int> a2 = {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}};
         xarray<int> b2 = {{10, 11, 12}};
-        xarray<int> e2 = {{1, 2, 3}, {4, 5 ,6}, {7, 8, 9}, {10, 11, 12}};
+        xarray<int> e2 = {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}, {10, 11, 12}};
         auto c2 = vstack(xtuple(a2, b2));
         EXPECT_EQ(c2, e2);
     }
@@ -539,17 +555,11 @@ namespace xt
         xarray<double> e = {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}};
         xarray<double> t = xt::triu(e);
 
-        xarray<double> expected = {{1, 2, 3},
-                                   {0, 5, 6},
-                                   {0, 0, 9}};
+        xarray<double> expected = {{1, 2, 3}, {0, 5, 6}, {0, 0, 9}};
 
-        xarray<double> expected_2 = {{1, 2, 3},
-                                     {4, 5, 6},
-                                     {0, 8, 9}};
+        xarray<double> expected_2 = {{1, 2, 3}, {4, 5, 6}, {0, 8, 9}};
 
-        xarray<double> expected_3 = {{0, 2, 3},
-                                     {0, 0, 6},
-                                     {0, 0, 0}};
+        xarray<double> expected_3 = {{0, 2, 3}, {0, 0, 6}, {0, 0, 0}};
 
         ASSERT_EQ(size_t(2), t.dimension());
         shape_t expected_shape = {3, 3};
@@ -569,17 +579,11 @@ namespace xt
         xarray<double> e = {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}};
         xarray<double> t = xt::tril(e);
 
-        xarray<double> expected = {{1, 0, 0},
-                                   {4, 5, 0},
-                                   {7, 8, 9}};
+        xarray<double> expected = {{1, 0, 0}, {4, 5, 0}, {7, 8, 9}};
 
-        xarray<double> expected_2 = {{1, 2, 0},
-                                     {4, 5, 6},
-                                     {7, 8, 9}};
+        xarray<double> expected_2 = {{1, 2, 0}, {4, 5, 6}, {7, 8, 9}};
 
-        xarray<double> expected_3 = {{0, 0, 0},
-                                     {4, 0, 0},
-                                     {7, 8, 0}};
+        xarray<double> expected_3 = {{0, 0, 0}, {4, 0, 0}, {7, 8, 0}};
 
         ASSERT_EQ(size_t(2), t.dimension());
         shape_t expected_shape = {3, 3};
@@ -617,19 +621,14 @@ namespace xt
 
     TEST(xbuilder, diagonal_advanced)
     {
-        xarray<double> e = {{{{0, 1, 2}, {3, 4, 5}},
-                             {{6, 7, 8}, {9, 10, 11}}},
-                            {{{12, 13, 14}, {15, 16, 17}},
-                             {{18, 19, 20}, {21, 22, 23}}}};
+        xarray<double> e = {
+            {{{0, 1, 2}, {3, 4, 5}}, {{6, 7, 8}, {9, 10, 11}}},
+            {{{12, 13, 14}, {15, 16, 17}}, {{18, 19, 20}, {21, 22, 23}}}
+        };
 
         xarray<double> d1 = xt::diagonal(e);
 
-        xarray<double> expected = {{{0, 18},
-                                    {1, 19},
-                                    {2, 20}},
-                                   {{3, 21},
-                                    {4, 22},
-                                    {5, 23}}};
+        xarray<double> expected = {{{0, 18}, {1, 19}, {2, 20}}, {{3, 21}, {4, 22}, {5, 23}}};
         ASSERT_EQ(expected, d1);
 
         std::vector<double> d2 = {6, 7, 8, 9, 10, 11};
@@ -660,21 +659,21 @@ namespace xt
     TEST(xbuilder, arange_broadcast)
     {
         auto a = arange<int>(1);
-        xarray<int> b = { 1, 2, 3 };
+        xarray<int> b = {1, 2, 3};
         xarray<int> res = a + b;
         EXPECT_EQ(res, b);
     }
 
     TEST(xbuilder, empty)
     {
-
         bool b = false;
 
         auto e1 = empty<double>({3, 4, 1});
         b = std::is_same<decltype(e1), xtensor<double, 3>>::value;
         EXPECT_TRUE(b);
-        b = std::is_same<decltype(empty<int, layout_type::column_major>({3,3,3})),
-                         xtensor<int, 3, layout_type::column_major>>::value;
+        b = std::is_same<
+            decltype(empty<int, layout_type::column_major>({3, 3, 3})),
+            xtensor<int, 3, layout_type::column_major>>::value;
         EXPECT_TRUE(b);
 
         auto es = empty<double>(std::array<std::size_t, 3>{3, 4, 1});
@@ -692,7 +691,13 @@ namespace xt
 
         xt::dynamic_shape<std::size_t> sd = {3, 2, 1};
         auto ed1 = empty<double>(sd);
-        auto ed2 = empty<double, layout_type::column_major>(dynamic_shape<std::size_t>({3, 3, 3}));
+// TODO : The ed2 expression do not work on MSVC due to bad deduction since cpp20. We need to fix it for MSVC.
+#if defined(_MSVC_LANG)
+        using ShapeType = xt::dynamic_shape<std::size_t>;
+        auto ed2 = empty<double, xt::layout_type::column_major, ShapeType>(ShapeType({3, 3, 3}));
+#else
+        auto ed2 = empty<double, xt::layout_type::column_major>(xt::dynamic_shape<std::size_t>({3, 3, 3}));
+#endif
         auto ed3 = empty<double>(std::vector<std::size_t>({3, 3, 3}));
         b = std::is_same<decltype(ed1), xarray<double>>::value;
         EXPECT_TRUE(b);

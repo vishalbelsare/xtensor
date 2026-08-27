@@ -14,9 +14,9 @@ There are two types of indices: *array indices* and *flat indices*. Consider thi
 
 .. code-block:: cpp
 
-    #include <xtensor/xtensor.hpp>
-    #include <xtensor/xarray.hpp>
-    #include <xtensor/xio.hpp>
+    #include <xtensor/containers/xtensor.hpp>
+    #include <xtensor/containers/xarray.hpp>
+    #include <xtensor/io/xio.hpp>
 
     int main()
     {
@@ -90,8 +90,8 @@ are turned on, and the number of indices is assumed to match the dimension of th
     post-pad zeros if you specify less indices than the rank of the array.
     Example: ``a.unchecked(1) == a(1, 0)``.
 
-:cpp:func:`periodic(args...) <xt::xcaontainer::periodic>`
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+:cpp:func:`periodic(args...) <xt::xcontainer::periodic>`
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 *   Example: ``a.periodic(-1, -2) == 7``.
 *   See also: :cpp:func:`xt::xcontainer::periodic`.
@@ -183,9 +183,9 @@ For the same example:
 
 .. code-block:: cpp
 
-    #include <xtensor/xtensor.hpp>
-    #include <xtensor/xarray.hpp>
-    #include <xtensor/xio.hpp>
+    #include <xtensor/containers/xtensor.hpp>
+    #include <xtensor/containers/xarray.hpp>
+    #include <xtensor/io/xio.hpp>
 
     int main()
     {
@@ -222,9 +222,9 @@ For example:
 
 .. code-block:: cpp
 
-    #include <xtensor/xtensor.hpp>
-    #include <xtensor/xview.hpp>
-    #include <xtensor/xio.hpp>
+    #include <xtensor/containers/xtensor.hpp>
+    #include <xtensor/views/xview.hpp>
+    #include <xtensor/io/xio.hpp>
 
     int main()
     {
@@ -252,10 +252,10 @@ For example
 
 .. code-block:: cpp
 
-    #include <xtensor/xarray.hpp>
-    #include <xtensor/xtensor.hpp>
-    #include <xtensor/xstrides.hpp>
-    #include <xtensor/xio.hpp>
+    #include <xtensor/containers/xarray.hpp>
+    #include <xtensor/containers/xtensor.hpp>
+    #include <xtensor/core/xstrides.hpp>
+    #include <xtensor/io/xio.hpp>
 
     int main()
     {

@@ -1,0 +1,22 @@
+name: Static Analysis
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+jobs:
+  pre-commit:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v6
+    - uses: pre-commit/action@v3.0.1
+
+  include-check:
+    runs-on: ubuntu-latest
+    name: Check unused standard includes
+    steps:
+    - uses: actions/checkout@v6
+    - run: pip install diskarzhan
+    - run: diskarzhan `find include -name '*.hpp'`

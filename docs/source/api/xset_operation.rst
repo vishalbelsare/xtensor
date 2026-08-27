@@ -7,28 +7,15 @@
 xset_operation
 ==============
 
-Defined in ``xtensor/xset_operation.hpp``
+Defined in ``xtensor/misc/xset_operation.hpp``
 
-.. doxygenenum:: xt::isin(E&&, F&&)
-   :project: xtensor
+``xt::searchsorted(a, v, right)`` returns insertion indices for values ``v``
+in the sorted array ``a``.
 
-.. doxygenenum:: xt::in1d(E&&, F&&)
-   :project: xtensor
+Available functions
+-------------------
 
-.. doxygenenum:: xt::searchsorted(E1&&, E2&&, bool)
-   :project: xtensor
-
-Further overloads
------------------
-
-.. doxygenenum:: xt::isin(E&&, std::initializer_list<T>)
-   :project: xtensor
-
-.. doxygenenum:: xt::isin(E&&, I&&, I&&)
-   :project: xtensor
-
-.. doxygenenum:: xt::in1d(E&&, std::initializer_list<T>)
-   :project: xtensor
-
-.. doxygenenum:: xt::in1d(E&&, I&&, I&&)
-   :project: xtensor
+- ``xt::isin(element, test_elements)``
+- ``xt::in1d(element, test_elements)``
+- ``xt::isin(element, begin, end)``
+- ``xt::in1d(element, begin, end)``

@@ -15,7 +15,7 @@ xarray initialization
     xt::xarray<double> a({1, 3, 4, 2});
 
 does not initialize a 4D-array, but a 1D-array containing the values ``1``, ``3``,
-``4``, and ``2``. 
+``4``, and ``2``.
 It is strictly equivalent to
 
 .. code::
@@ -70,10 +70,49 @@ in the returned expression.
 Replacing ``auto tmp`` with ``xt::xarray<double> tmp`` does not change anything, ``tmp``
 is still an lvalue and thus captured by reference.
 
+.. warning::
+
+    This issue is particularly subtle with reducer functions like :cpp:func:`xt::amax`,
+    :cpp:func:`xt::sum`, etc. Consider the following function:
+
+    .. code::
+
+        template <typename T>
+        xt::xtensor<T, 2> logSoftmax(const xt::xtensor<T, 2> &matrix)
+        {
+            xt::xtensor<T, 2> maxVals = xt::amax(matrix, {1}, xt::keep_dims);
+            auto shifted = matrix - maxVals;
+            auto expVals = xt::exp(shifted);
+            auto sumExp = xt::sum(expVals, {1}, xt::keep_dims);
+            return shifted - xt::log(sumExp);
+        }
+
+    This function may produce incorrect results or crash, especially in optimized builds.
+    The issue is that ``shifted``, ``expVals``, and ``sumExp`` are all lazy expressions
+    that hold references to local variables. When the function returns, these local
+    variables are destroyed, and the returned expression contains dangling references.
+
+    The fix is to evaluate reducer results and the returned expression explicitly.
+    Element-wise lazy expressions (like ``shifted`` and ``expVals``) are safe to
+    leave as ``auto``, but reducer results (like ``sumExp``) must be materialized
+    before being used in a subsequent element-wise expression:
+
+    .. code::
+
+        template <typename T>
+        xt::xtensor<T, 2> logSoftmax(const xt::xtensor<T, 2> &matrix)
+        {
+            xt::xtensor<T, 2> maxVals = xt::amax(matrix, {1}, xt::keep_dims);
+            auto shifted = matrix - maxVals;
+            auto expVals = xt::exp(shifted);
+            xt::xtensor<T, 2> sumExp = xt::sum(expVals, {1}, xt::keep_dims);
+            return xt::xtensor<T, 2>(shifted - xt::log(sumExp));
+        }
+
 Random numbers not consistent
 -----------------------------
 
-Using a random number function from xtensor actually returns a lazy 
+Using a random number function from xtensor actually returns a lazy
 generator. That means, accessing the same element of a random number
 generator does not give the same random number if called twice.
 
@@ -142,7 +181,7 @@ Alignment of fixed-size members
 When building with *xsimd* (see :ref:`external-dependencies`), if you define a structure
 having members of fixed-size xtensor types, you must ensure that the buffers properly
 aligned. For this you can use the macro ``XTENSOR_FIXED_ALIGN`` available in
-``xtensor/xtensor_config.hpp``.
+``xtensor/core/xtensor_config.hpp``.
 Consider the following example:
 
 .. code-block:: cpp

@@ -9,26 +9,7 @@ Trigonometric functions
 
 **xtensor** provides the following trigonometric functions for xexpressions and scalars:
 
-Defined in ``xtensor/xmath.hpp``
+Defined in ``xtensor/core/xmath.hpp``
 
-.. doxygenfunction:: sin(E&&)
-   :project: xtensor
-
-.. doxygenfunction:: cos(E&&)
-   :project: xtensor
-
-.. doxygenfunction:: tan(E&&)
-   :project: xtensor
-
-.. doxygenfunction:: asin(E&&)
-   :project: xtensor
-
-.. doxygenfunction:: acos(E&&)
-   :project: xtensor
-
-.. doxygenfunction:: atan(E&&)
-   :project: xtensor
-
-.. doxygenfunction:: atan2(E1&&, E2&&)
-   :project: xtensor
-
+.. doxygengroup:: trigo_functions
+   :members:

@@ -47,7 +47,7 @@ Adapting a pointer
 ------------------
 
 Suppose that you want to use the *xtensor* machinery on a small contiguous subset of a large tensor.
-You can, of course, use :ref:`Views`, but for efficiency you can also use pointers to the right bit of memory.
+You can, of course, use :ref:`view-description`, but for efficiency you can also use pointers to the right bit of memory.
 Consider an example of an ``[M, 2, 2]`` tensor ``A``,
 for which you want to operate on ``A[i, :, :]`` for different ``i``.
 In this case the most efficient *xtensor* has to offer is:
@@ -161,7 +161,7 @@ they are declared as ``protected`` in the base class.
     class raw_tensor_adaptor : public xcontainer<raw_tensor_adaptor<T>>,
                                public xcontainer_semantic<raw_tensor_adaptor<T>>
     {
-    
+
     public:
 
         using self_type = raw_tensor_adaptor<T>;
@@ -189,7 +189,7 @@ they are declared as ``protected`` in the base class.
             return semantic_base::operator=(e);
         }
     };
-    
+
 The last two methods are extended copy constructor and assign operator. They allow writing things like
 
 .. code::
@@ -207,7 +207,7 @@ strides based on the shape and the layout, so the implementation of the ``resize
 
 .. code::
 
-    #include <xtensor/xstrides.hpp> // for utility functions
+    #include <xtensor/core/xstrides.hpp> // for utility functions
 
     template <class T>
     void resize(const shape_type& shape)
@@ -392,7 +392,7 @@ constructor and assign operator.
             return semantic_base::operator=(e);
         }
     };
-    
+
 Implement access operators
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -464,7 +464,7 @@ This part is relatively straightforward:
     template <class S>
     bool broadcast_shape(const S& s) const
     {
-        // Available in "xtensor/xtrides.hpp"
+        // Available in "xtensor/core/xstrides.hpp"
         return xt::broadcast_shape(shape(), s);
     }
 
@@ -510,4 +510,3 @@ iterators.
         size_type offset = s.size() - dimension();
         return const_stepper(this, offset, true);
     }
-

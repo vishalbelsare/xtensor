@@ -13,7 +13,7 @@ format.
 Please note that many more input and output formats are available in the `xtensor-io
 <https://github.com/xtensor-stack/xtensor-io>`_ package.
 `xtensor-io` offers functions to load and store from image files (``jpg``, ``gif``, ``png``...),
-sound files (``wav``, ``ogg``...), HDF5 files (``h5``, ``hdf5``, ...), and compressed numpy format (``npz``).
+sound files (``wav``, ``ogg``...), HDF5 files (``h5``, ``hdf5``, ...), and compressed NumPy format (``npz``).
 
 
 Loading CSV data into xtensor
@@ -28,8 +28,8 @@ save data in the Comma-separated value format. The reference documentation is :d
     #include <fstream>
     #include <iostream>
 
-    #include <xtensor/xarray.hpp>
-    #include <xtensor/xcsv.hpp>
+    #include <xtensor/containers/xarray.hpp>
+    #include <xtensor/io/xcsv.hpp>
 
     int main()
     {
@@ -59,8 +59,8 @@ Reference documentation for the functions used is found here :doc:`api/xnpy`.
     #include <iostream>
     #include <fstream>
 
-    #include <xtensor/xarray.hpp>
-    #include <xtensor/xnpy.hpp>
+    #include <xtensor/containers/xarray.hpp>
+    #include <xtensor/io/xnpy.hpp>
 
     int main()
     {
@@ -85,8 +85,8 @@ The reference documentation is found :doc:`api/xjson`.
 
 .. code::
 
-    #include <xtensor/xjson.hpp>
-    #include <xtensor/xarray.hpp>
+    #include <xtensor/io/xjson.hpp>
+    #include <xtensor/containers/xarray.hpp>
 
     int main()
     {

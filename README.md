@@ -1,12 +1,13 @@
 # ![xtensor](docs/source/xtensor.svg)
 
-[![Appveyor](https://ci.appveyor.com/api/projects/status/dljjg79povwgncuf?svg=true)](https://ci.appveyor.com/project/xtensor-stack/xtensor)
-[![Azure](https://dev.azure.com/xtensor-stack/xtensor-stack/_apis/build/status/xtensor-stack.xtensor?branchName=master)](https://dev.azure.com/xtensor-stack/xtensor-stack/_build/latest?definitionId=4&branchName=master)
-[![Coverity](https://scan.coverity.com/projects/18335/badge.svg)](https://scan.coverity.com/projects/xtensor)
+[![GHA Linux](https://github.com/xtensor-stack/xtensor/actions/workflows/linux.yml/badge.svg)](https://github.com/xtensor-stack/xtensor/actions/workflows/linux.yml)
+[![GHA OSX](https://github.com/xtensor-stack/xtensor/actions/workflows/osx.yml/badge.svg)](https://github.com/xtensor-stack/xtensor/actions/workflows/osx.yml)
+[![GHA Windows](https://github.com/xtensor-stack/xtensor/actions/workflows/windows.yml/badge.svg)](https://github.com/xtensor-stack/xtensor/actions/workflows/windows.yml)
 [![Documentation](http://readthedocs.org/projects/xtensor/badge/?version=latest)](https://xtensor.readthedocs.io/en/latest/?badge=latest)
 [![Doxygen -> gh-pages](https://github.com/xtensor-stack/xtensor/workflows/gh-pages/badge.svg)](https://xtensor-stack.github.io/xtensor)
 [![Binder](https://mybinder.org/badge.svg)](https://mybinder.org/v2/gh/xtensor-stack/xtensor/stable?filepath=notebooks%2Fxtensor.ipynb)
-[![Join the Gitter Chat](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/QuantStack/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![Zulip](https://img.shields.io/badge/social_chat-zulip-blue.svg)](https://xtensor.zulipchat.com/#narrow/channel/539553-Ask-anything)
+[![CodSpeed](https://img.shields.io/endpoint?url=https://codspeed.io/badge.json)](https://codspeed.io/xtensor-stack/xtensor?utm_source=badge)
 
 Multi-dimensional arrays with broadcasting and lazy computing.
 
@@ -32,11 +33,10 @@ Julia and R bindings, check out the [xtensor-python](https://github.com/xtensor-
 [xtensor-julia](https://github.com/xtensor-stack/Xtensor.jl) and
 [xtensor-r](https://github.com/xtensor-stack/xtensor-r) projects respectively.
 
-`xtensor` requires a modern C++ compiler supporting C++14. The following C++
-compilers are supported:
+Up to version 0.26.0, `xtensor` requires a C++ compiler supporting C++14.
+`xtensor` 0.26.x requires a C++ compiler supporting C++17.
+`xtensor` 0.27.x requires a C++ compiler supporting C++20.
 
- - On Windows platforms, Visual C++ 2015 Update 2, or more recent
- - On Unix platforms, gcc 4.9 or a recent version of Clang
 
 ## Installation
 
@@ -97,8 +97,19 @@ library:
 
 | `xtensor` | `xtl`   |`xsimd` (optional) |
 |-----------|---------|-------------------|
-|  master   | ^0.7.0  |       ^8.0.3      |
-|  0.24.x   | ^0.7.0  |       ^8.0.3      |
+|  master   | ^0.8.0  |       ^13.2.0     |
+|  0.27.1   | ^0.8.0  |       ^13.2.0     |
+|  0.27.0   | ^0.8.0  |       ^13.2.0     |
+|  0.26.0   | ^0.8.0  |       ^13.2.0     |
+|  0.25.0   | ^0.7.5  |       ^11.0.0     |
+|  0.24.7   | ^0.7.0  |       ^10.0.0     |
+|  0.24.6   | ^0.7.0  |       ^10.0.0     |
+|  0.24.5   | ^0.7.0  |       ^10.0.0     |
+|  0.24.4   | ^0.7.0  |       ^10.0.0     |
+|  0.24.3   | ^0.7.0  |       ^8.0.3      |
+|  0.24.2   | ^0.7.0  |       ^8.0.3      |
+|  0.24.1   | ^0.7.0  |       ^8.0.3      |
+|  0.24.0   | ^0.7.0  |       ^8.0.3      |
 |  0.23.x   | ^0.7.0  |       ^7.4.8      |
 |  0.22.0   | ^0.6.23 |       ^7.4.8      |
 

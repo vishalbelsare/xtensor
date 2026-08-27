@@ -10,26 +10,7 @@ Power functions
 
 **xtensor** provides the following power functions for xexpressions and scalars:
 
-Defined in ``xtensor/xmath.hpp``
+Defined in ``xtensor/core/xmath.hpp``
 
-.. doxygenfunction:: pow(E1&&, E2&&)
-   :project: xtensor
-
-.. doxygenfunction:: pow(E&&)
-   :project: xtensor
-
-.. doxygenfunction:: square(E1&&)
-   :project: xtensor
-
-.. doxygenfunction:: cube(E1&&)
-   :project: xtensor
-
-.. doxygenfunction:: sqrt(E&&)
-   :project: xtensor
-
-.. doxygenfunction:: cbrt(E&&)
-   :project: xtensor
-
-.. doxygenfunction:: hypot(E1&&, E2&&)
-   :project: xtensor
-
+.. doxygengroup:: pow_functions
+   :members:

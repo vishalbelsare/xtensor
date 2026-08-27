@@ -9,16 +9,7 @@ Accumulating functions
 
 **xtensor** provides the following accumulating functions for xexpressions:
 
-Defined in ``xtensor/xmath.hpp``
+Defined in ``xtensor/core/xmath.hpp``
 
-.. doxygenfunction:: cumsum(E&&)
-   :project: xtensor
-
-.. doxygenfunction:: cumsum(E&&, std::ptrdiff_t)
-   :project: xtensor
-
-.. doxygenfunction:: cumprod(E&&)
-   :project: xtensor
-
-.. doxygenfunction:: cumprod(E&&, std::ptrdiff_t)
-   :project: xtensor
+.. doxygengroup:: acc_functions
+   :members:

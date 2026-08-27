@@ -9,26 +9,7 @@ Exponential functions
 
 **xtensor** provides the following exponential functions for xexpressions:
 
-Defined in ``xtensor/xmath.hpp``
+Defined in ``xtensor/core/xmath.hpp``
 
-.. doxygenfunction:: exp(E&&)
-   :project: xtensor
-
-.. doxygenfunction:: exp2(E&&)
-   :project: xtensor
-
-.. doxygenfunction:: expm1(E&&)
-   :project: xtensor
-
-.. doxygenfunction:: log(E&&)
-   :project: xtensor
-
-.. doxygenfunction:: log2(E&&)
-   :project: xtensor
-
-.. doxygenfunction:: log10(E&&)
-   :project: xtensor
-
-.. doxygenfunction:: log1p(E&&)
-   :project: xtensor
-
+.. doxygengroup:: exp_functions
+   :members:

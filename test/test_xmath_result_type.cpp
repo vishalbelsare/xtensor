@@ -1,11 +1,11 @@
 /***************************************************************************
-* Copyright (c) Johan Mabille, Sylvain Corlay and Wolf Vollprecht          *
-* Copyright (c) QuantStack                                                 *
-*                                                                          *
-* Distributed under the terms of the BSD 3-Clause License.                 *
-*                                                                          *
-* The full license is in the file LICENSE, distributed with this software. *
-****************************************************************************/
+ * Copyright (c) Johan Mabille, Sylvain Corlay and Wolf Vollprecht          *
+ * Copyright (c) QuantStack                                                 *
+ *                                                                          *
+ * Distributed under the terms of the BSD 3-Clause License.                 *
+ *                                                                          *
+ * The full license is in the file LICENSE, distributed with this software. *
+ ****************************************************************************/
 
 #include <complex>
 
@@ -21,22 +21,22 @@
 #pragma GCC diagnostic ignored "-Wconversion"
 #pragma GCC diagnostic ignored "-Wfloat-conversion"
 #pragma GCC diagnostic ignored "-Wsign-conversion"
-#include "xtensor/xarray.hpp"
-#include "xtensor/xmath.hpp"
-#include "xtensor/xrandom.hpp"
+#include "xtensor/containers/xarray.hpp"
+#include "xtensor/core/xmath.hpp"
+#include "xtensor/generators/xrandom.hpp"
 #pragma GCC diagnostic pop
 #elif defined(_WIN32)
 #pragma warning(push)
-#pragma warning(disable: 4244)
-#pragma warning(disable: 4267)
-#include "xtensor/xarray.hpp"
-#include "xtensor/xmath.hpp"
-#include "xtensor/xrandom.hpp"
+#pragma warning(disable : 4244)
+#pragma warning(disable : 4267)
+#include "xtensor/containers/xarray.hpp"
+#include "xtensor/core/xmath.hpp"
+#include "xtensor/generators/xrandom.hpp"
 #pragma warning(pop)
 #else
-#include "xtensor/xarray.hpp"
-#include "xtensor/xmath.hpp"
-#include "xtensor/xrandom.hpp"
+#include "xtensor/containers/xarray.hpp"
+#include "xtensor/core/xmath.hpp"
+#include "xtensor/generators/xrandom.hpp"
 #endif
 
 #include "xtl/xtype_traits.hpp"
@@ -56,69 +56,66 @@ namespace xt
         EXPECT_TRUE((std::is_same<result_type, EXPECTED_TYPE>::value));              \
     }
 
-template <class T1, class T2>
-using promote_t = xtl::promote_type_t<T1, T2>;
+    template <class T1, class T2>
+    using promote_t = xtl::promote_type_t<T1, T2>;
 
-template <class T, class E>
-void check_promoted_types(E&& e)
-{
-    using result_type = typename std::decay_t<decltype(e)>::value_type;
-    EXPECT_TRUE((std::is_same<result_type, promote_t<T, result_type>>::value));
-}
+    template <class T, class E>
+    void check_promoted_types(E&& e)
+    {
+        using result_type = typename std::decay_t<decltype(e)>::value_type;
+        EXPECT_TRUE((std::is_same<result_type, promote_t<T, result_type>>::value));
+    }
 
-#define ARRAY_TYPE(VALUE_TYPE)  \
-    std::array<VALUE_TYPE, 2>
+#define ARRAY_TYPE(VALUE_TYPE) std::array<VALUE_TYPE, 2>
 
-#define CHECK_TEMPLATED_RESULT_TYPE(FUNC, INPUT)                                   \
-        check_promoted_types<unsigned char>(FUNC<unsigned char>(INPUT));           \
-        check_promoted_types<signed char>(FUNC<signed char>(INPUT));               \
-        check_promoted_types<char>(FUNC<char>(INPUT));                             \
-        check_promoted_types<unsigned short>(FUNC<unsigned short>(INPUT));         \
-        check_promoted_types<signed short>(FUNC<signed short>(INPUT));             \
-        check_promoted_types<short>(FUNC<short>(INPUT));                           \
-        check_promoted_types<unsigned int>(FUNC<unsigned int>(INPUT));             \
-        check_promoted_types<signed int>(FUNC<signed int>(INPUT));                 \
-        check_promoted_types<int>(FUNC<int>(INPUT));                               \
-        check_promoted_types<unsigned long long>(FUNC<unsigned long long>(INPUT)); \
-        check_promoted_types<long long>(FUNC<signed long long>(INPUT));            \
-        check_promoted_types<long long>(FUNC<long long>(INPUT));                   \
-        check_promoted_types<float>(FUNC<float>(INPUT));                           \
-        check_promoted_types<double>(FUNC<double>(INPUT));
+#define CHECK_TEMPLATED_RESULT_TYPE(FUNC, INPUT)                               \
+    check_promoted_types<unsigned char>(FUNC<unsigned char>(INPUT));           \
+    check_promoted_types<signed char>(FUNC<signed char>(INPUT));               \
+    check_promoted_types<char>(FUNC<char>(INPUT));                             \
+    check_promoted_types<unsigned short>(FUNC<unsigned short>(INPUT));         \
+    check_promoted_types<signed short>(FUNC<signed short>(INPUT));             \
+    check_promoted_types<short>(FUNC<short>(INPUT));                           \
+    check_promoted_types<unsigned int>(FUNC<unsigned int>(INPUT));             \
+    check_promoted_types<signed int>(FUNC<signed int>(INPUT));                 \
+    check_promoted_types<int>(FUNC<int>(INPUT));                               \
+    check_promoted_types<unsigned long long>(FUNC<unsigned long long>(INPUT)); \
+    check_promoted_types<long long>(FUNC<signed long long>(INPUT));            \
+    check_promoted_types<long long>(FUNC<long long>(INPUT));                   \
+    check_promoted_types<float>(FUNC<float>(INPUT));                           \
+    check_promoted_types<double>(FUNC<double>(INPUT));
 
-#define CHECK_STDDEV_TEMPLATED_RESULT_TYPE(FUNC, INPUT)                            \
-        {                                                                          \
-        using result_type = typename std::decay_t<decltype(INPUT)>::value_type;    \
-        using promo_type = std::conditional_t<std::is_integral<result_type>::value,\
-                                              double,                              \
-                                              float>;                              \
-                                                                                   \
-        check_promoted_types<promo_type>(FUNC<unsigned char>(INPUT));              \
-        check_promoted_types<promo_type>(FUNC<signed char>(INPUT));                \
-        check_promoted_types<promo_type>(FUNC<char>(INPUT));                       \
-        check_promoted_types<promo_type>(FUNC<unsigned short>(INPUT));             \
-        check_promoted_types<promo_type>(FUNC<signed short>(INPUT));               \
-        check_promoted_types<promo_type>(FUNC<short>(INPUT));                      \
-        check_promoted_types<promo_type>(FUNC<unsigned int>(INPUT));               \
-        check_promoted_types<promo_type>(FUNC<signed int>(INPUT));                 \
-        check_promoted_types<promo_type>(FUNC<int>(INPUT));                        \
-        check_promoted_types<promo_type>(FUNC<unsigned long long>(INPUT));         \
-        check_promoted_types<promo_type>(FUNC<signed long long>(INPUT));           \
-        check_promoted_types<promo_type>(FUNC<long long>(INPUT));                  \
-        check_promoted_types<float>(FUNC<float>(INPUT));                           \
-        check_promoted_types<double>(FUNC<double>(INPUT));                         \
-        }
+#define CHECK_STDDEV_TEMPLATED_RESULT_TYPE(FUNC, INPUT)                                             \
+    {                                                                                               \
+        using result_type = typename std::decay_t<decltype(INPUT)>::value_type;                     \
+        using promo_type = std::conditional_t<std::is_integral<result_type>::value, double, float>; \
+                                                                                                    \
+        check_promoted_types<promo_type>(FUNC<unsigned char>(INPUT));                               \
+        check_promoted_types<promo_type>(FUNC<signed char>(INPUT));                                 \
+        check_promoted_types<promo_type>(FUNC<char>(INPUT));                                        \
+        check_promoted_types<promo_type>(FUNC<unsigned short>(INPUT));                              \
+        check_promoted_types<promo_type>(FUNC<signed short>(INPUT));                                \
+        check_promoted_types<promo_type>(FUNC<short>(INPUT));                                       \
+        check_promoted_types<promo_type>(FUNC<unsigned int>(INPUT));                                \
+        check_promoted_types<promo_type>(FUNC<signed int>(INPUT));                                  \
+        check_promoted_types<promo_type>(FUNC<int>(INPUT));                                         \
+        check_promoted_types<promo_type>(FUNC<unsigned long long>(INPUT));                          \
+        check_promoted_types<promo_type>(FUNC<signed long long>(INPUT));                            \
+        check_promoted_types<promo_type>(FUNC<long long>(INPUT));                                   \
+        check_promoted_types<float>(FUNC<float>(INPUT));                                            \
+        check_promoted_types<double>(FUNC<double>(INPUT));                                          \
+    }
 
-#define CHECK_TEMPLATED_RESULT_TYPE_FOR_ALL(INPUT)        \
-        CHECK_TEMPLATED_RESULT_TYPE(sum, INPUT)           \
-        CHECK_TEMPLATED_RESULT_TYPE(mean, INPUT)          \
-        CHECK_TEMPLATED_RESULT_TYPE(prod, INPUT)          \
-        CHECK_TEMPLATED_RESULT_TYPE(variance, INPUT)      \
-        CHECK_STDDEV_TEMPLATED_RESULT_TYPE(stddev, INPUT)
+#define CHECK_TEMPLATED_RESULT_TYPE_FOR_ALL(INPUT) \
+    CHECK_TEMPLATED_RESULT_TYPE(sum, INPUT)        \
+    CHECK_TEMPLATED_RESULT_TYPE(mean, INPUT)       \
+    CHECK_TEMPLATED_RESULT_TYPE(prod, INPUT)       \
+    CHECK_TEMPLATED_RESULT_TYPE(variance, INPUT)   \
+    CHECK_STDDEV_TEMPLATED_RESULT_TYPE(stddev, INPUT)
 
     TEST(xmath, uchar_result_type)
-    {        
+    {
         shape_type shape = {3, 2};
-        xarray<unsigned char> auchar(shape);
+        auto auchar = xt::zeros<unsigned char>(shape);
 
         CHECK_RESULT_TYPE(auchar + auchar, int);
         CHECK_RESULT_TYPE(2 * auchar, int);
@@ -132,9 +129,9 @@ void check_promoted_types(E&& e)
     }
 
     TEST(xmath, short_result_type)
-    {        
+    {
         shape_type shape = {3, 2};
-        xarray<short> ashort(shape);
+        auto ashort = xt::zeros<short>(shape);
 
         CHECK_RESULT_TYPE(ashort + ashort, int);
         CHECK_RESULT_TYPE(2 * ashort, int);
@@ -148,9 +145,9 @@ void check_promoted_types(E&& e)
     }
 
     TEST(xmath, ushort_result_type)
-    {        
+    {
         shape_type shape = {3, 2};
-        xarray<unsigned short> aushort(shape);
+        auto aushort = xt::zeros<unsigned short>(shape);
 
         CHECK_RESULT_TYPE(aushort + aushort, int);
         CHECK_RESULT_TYPE(2u * aushort, unsigned int);
@@ -164,9 +161,9 @@ void check_promoted_types(E&& e)
     }
 
     TEST(xmath, int_result_type)
-    {        
+    {
         shape_type shape = {3, 2};
-        xarray<int> aint(shape);
+        auto aint = xt::zeros<int>(shape);
 
         CHECK_RESULT_TYPE(aint + aint, int);
         CHECK_RESULT_TYPE(2 * aint, int);
@@ -180,10 +177,10 @@ void check_promoted_types(E&& e)
     }
 
     TEST(xmath, uint_result_type)
-    {        
+    {
         shape_type shape = {3, 2};
-        xarray<unsigned int> auint(shape);
-  
+        auto auint = xt::zeros<unsigned int>(shape);
+
         CHECK_RESULT_TYPE(auint + auint, unsigned int);
         CHECK_RESULT_TYPE(2u * auint, unsigned int);
         CHECK_RESULT_TYPE(2.0 * auint, double);
@@ -196,9 +193,9 @@ void check_promoted_types(E&& e)
     }
 
     TEST(xmath, long_result_type)
-    {        
+    {
         shape_type shape = {3, 2};
-        xarray<long long> along(shape);
+        auto along = xt::zeros<long long>(shape);
 
         CHECK_RESULT_TYPE(along + along, signed long long);
         CHECK_RESULT_TYPE(2 * along, signed long long);
@@ -212,10 +209,10 @@ void check_promoted_types(E&& e)
     }
 
     TEST(xmath, ulong_result_type)
-    {        
+    {
         shape_type shape = {3, 2};
-        xarray<unsigned long long> aulong(shape);
-    
+        auto aulong = xt::zeros<unsigned long long>(shape);
+
         CHECK_RESULT_TYPE(aulong + aulong, unsigned long long);
         CHECK_RESULT_TYPE(2ul * aulong, unsigned long long);
         CHECK_RESULT_TYPE(2.0 * aulong, double);
@@ -228,9 +225,9 @@ void check_promoted_types(E&& e)
     }
 
     TEST(xmath, float_result_type)
-    {        
+    {
         shape_type shape = {3, 2};
-        xarray<float> afloat(shape);
+        auto afloat = xt::zeros<float>(shape);
 
         CHECK_RESULT_TYPE(afloat + afloat, float);
         CHECK_RESULT_TYPE(2.0f * afloat, float);
@@ -244,9 +241,9 @@ void check_promoted_types(E&& e)
     }
 
     TEST(xmath, double_result_type)
-    {        
+    {
         shape_type shape = {3, 2};
-        xarray<double> adouble(shape);
+        auto adouble = xt::zeros<double>(shape);
 
         CHECK_RESULT_TYPE(adouble + adouble, double);
         CHECK_RESULT_TYPE(2.0 * adouble, double);
@@ -259,7 +256,7 @@ void check_promoted_types(E&& e)
     }
 
     TEST(xmath, float_complex_result_type)
-    {        
+    {
         shape_type shape = {3, 2};
         xarray<std::complex<float>> afcomplex(shape);
 
@@ -273,7 +270,7 @@ void check_promoted_types(E&& e)
     }
 
     TEST(xmath, double_complex_result_type)
-    {        
+    {
         shape_type shape = {3, 2};
         xarray<std::complex<double>> adcomplex(shape);
 
@@ -287,7 +284,7 @@ void check_promoted_types(E&& e)
     }
 
     TEST(xmath, mixed_result_type)
-    {        
+    {
         shape_type shape = {3, 2};
         xarray<unsigned char> auchar(shape);
         xarray<short> ashort(shape);

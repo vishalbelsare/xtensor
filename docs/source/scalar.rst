@@ -16,7 +16,7 @@ but resized to become a 0-D array containing the scalar value:
 
 .. code::
 
-    #include <xtensor/xarray.hpp>
+    #include <xtensor/containers/xarray.hpp>
 
     xt::xarray<double> a = {{0., 1., 2.}, {3., 4., 5.}};
     double s = 1.2;
@@ -36,7 +36,7 @@ Assuming that the scalar assignment does not resize the array, we have the follo
 
 .. code::
 
-    #include <xtensor/xarray.hpp>
+    #include <xtensor/containers/xarray.hpp>
 
     xt::xarray<double> a = {{0., 1., 2.}, {3., 4., 5.}};
     double s = 1.2;
@@ -48,18 +48,18 @@ This is not consistent with the behavior of the copy constructor from a scalar:
 
 .. code::
 
-    #include <xtensor/xarray.hpp>
+    #include <xtensor/containers/xarray.hpp>
 
     xt::xarray<double> a(1.2);
     std::cout << a << std::endl;
     // prints 1.2 (a is a 0-D array)
 
 A way to fix this is to disable copy construction from scalar, and provide a constructor taking a shape and
-a scalar: 
+a scalar:
 
 .. code::
 
-    #include <xtensor/xarray.hpp>
+    #include <xtensor/containers/xarray.hpp>
 
     xt::xarray<double> a = {{0., 1., 2.}, {3., 4., 5.}};
     a = 1.2;
@@ -129,4 +129,3 @@ This simple example shows that without consistency between scalars and 0-D expre
 of some 0-D computation actually *silently* changes the shape of the expressions that this result is assigned to.
 
 The only way to avoid that behavior and the bugs it leads to is to handle scalars as if they were 0-dimensional expressions.
-

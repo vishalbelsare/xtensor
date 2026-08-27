@@ -7,29 +7,24 @@
 layout
 ======
 
-Defined in ``xtensor/xlayout.hpp``
+Defined in ``xtensor/core/xlayout.hpp``
 
 .. doxygenenum:: xt::layout_type
-   :project: xtensor
 
 .. doxygenfunction:: xt::compute_layout(Args... args)
-   :project: xtensor
 
 xcontainer
 ==========
 
-Defined in ``xtensor/xcontainer.hpp``
+Defined in ``xtensor/containers/xcontainer.hpp``
 
 .. doxygenclass:: xt::xcontainer
-   :project: xtensor
    :members:
 
 xstrided_container
 ==================
 
-Defined in ``xtensor/xcontainer.hpp``
+Defined in ``xtensor/containers/xcontainer.hpp``
 
 .. doxygenclass:: xt::xstrided_container
-   :project: xtensor
    :members:
-

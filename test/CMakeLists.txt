@@ -7,7 +7,7 @@
 # The full license is in the file LICENSE, distributed with this software. #
 ############################################################################
 
-cmake_minimum_required(VERSION 3.1)
+cmake_minimum_required(VERSION 3.15..3.29)
 
 if (CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
     project(xtensor-test CXX)
@@ -34,39 +34,27 @@ string(TOUPPER "${CMAKE_BUILD_TYPE}" U_CMAKE_BUILD_TYPE)
 
 include(set_compiler_flag.cmake)
 
-
-
-if(CPP17)
-  # User requested C++17, but compiler might not oblige.
+if(CPP23)
+  # User requested C++23, but compiler might not oblige.
   set_compiler_flag(
     _cxx_std_flag CXX
-    "-std=c++17"  # this should work with GNU, Intel, PGI
-    "/std:c++17"  # this should work with MSVC
+    "-std=c++23"  # this should work with GNU, Intel, PGI
+    "/std:c++23"  # this should work with MSVC
   )
   if(_cxx_std_flag)
-    message(STATUS "Building with C++17")
-  endif()
-elseif(CPP20)
-  # User requested C++17, but compiler might not oblige.
-  set_compiler_flag(
-    _cxx_std_flag CXX
-    "-std=c++2a"  # this should work with GNU, Intel, PGI
-    "/std:c++20"  # this should work with MSVC
-  )
-  if(_cxx_std_flag)
-    message(STATUS "Building with C++20")
+    message(STATUS "Building with C++23")
   endif()
 else()
   set_compiler_flag(
     _cxx_std_flag CXX REQUIRED
-    "-std=c++14"  # this should work with GNU, Intel, PGI
-    "/std:c++14"  # this should work with MSVC
+    "-std=c++20"  # this should work with GNU, Intel, PGI
+    "/std:c++20"  # this should work with MSVC
   )
-  message(STATUS "Building with C++14")
+  message(STATUS "Building with C++20")
 endif()
 
 if(NOT _cxx_std_flag)
-  message(FATAL_ERROR "xtensor-blas needs a C++14-compliant compiler.")
+  message(FATAL_ERROR "xtensor needs a C++20-compliant compiler.")
 endif()
 
 OPTION(XTENSOR_ENABLE_WERROR "Turn on -Werror" OFF)
@@ -86,7 +74,7 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "GNU" OR (CMAKE_CXX_COMPILER_ID MATCHES "Intel"
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror -DSKIP_ON_WERROR")
   endif()
 elseif(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${_cxx_std_flag} /MP /bigobj")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${_cxx_std_flag} /Zc:__cplusplus /MP /bigobj")
   set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /MANIFEST:NO")
   add_definitions(-D_CRT_SECURE_NO_WARNINGS)
   add_definitions(-D_SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING)
@@ -96,7 +84,7 @@ elseif(CMAKE_CXX_COMPILER_ID MATCHES "MSVC")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /EHsc")
   endif()
 elseif(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-  if(NOT WIN32)
+if (CMAKE_CXX_COMPILER_FRONTEND_VARIANT STREQUAL "GNU")
     CHECK_CXX_COMPILER_FLAG(-march=native arch_native_supported)
     if(arch_native_supported AND NOT CMAKE_CXX_FLAGS MATCHES "-march")
       set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -march=native")
@@ -109,7 +97,7 @@ elseif(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
     if (XTENSOR_ENABLE_WERROR)
       set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror -DSKIP_ON_WERROR")
     endif()
-  else() # We are using clang-cl
+  elseif (CMAKE_CXX_COMPILER_FRONTEND_VARIANT STREQUAL "MSVC")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${_cxx_std_flag} /bigobj")
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /MANIFEST:NO")
     add_definitions(-D_CRT_SECURE_NO_WARNINGS)
@@ -173,6 +161,7 @@ set(XTENSOR_TESTS
     main.cpp
     test_xaccumulator.cpp
     test_xadapt.cpp
+    test_strided_assign.cpp
     test_xassign.cpp
     test_xaxis_iterator.cpp
     test_xaxis_slice_iterator.cpp
@@ -185,6 +174,7 @@ set(XTENSOR_TESTS
     test_xdynamic_view.cpp
     test_xfunctor_adaptor.cpp
     test_xfixed.cpp
+    test_xfft.cpp
     test_xhistogram.cpp
     test_xpad.cpp
     test_xindex_view.cpp
@@ -221,11 +211,6 @@ if(nlohmann_json_FOUND)
     list(APPEND XTENSOR_TESTS test_xexpression_holder.cpp)
 endif()
 
-# remove xinfo tests for compilers < GCC 5
-if(("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU") AND (CMAKE_CXX_COMPILER_VERSION VERSION_LESS 5))
-    list(REMOVE_ITEM XTENSOR_TESTS test_xinfo.cpp)
-endif()
-
 # Add files for npy tests
 set(XNPY_FILES
     bool
@@ -245,6 +230,9 @@ foreach(filename IN LISTS XNPY_FILES)
 endforeach()
 
 file(GLOB XTENSOR_PREPROCESS_FILES files/cppy_source/*.cppy)
+
+# Sanitizer support
+include(${CMAKE_SOURCE_DIR}/cmake/sanitizers.cmake)
 
 # This target should only be run when the test source files have been changed.
 add_custom_target(
@@ -273,6 +261,8 @@ foreach(filename IN LISTS COMMON_BASE XTENSOR_TESTS)
     endif()
     target_include_directories(${targetname} PRIVATE ${XTENSOR_INCLUDE_DIR})
     target_link_libraries(${targetname} PRIVATE xtensor doctest::doctest ${CMAKE_THREAD_LIBS_INIT})
+    target_compile_options(${targetname} PRIVATE  $<$<BOOL:USE_SANITIZER>:${SANITIZER_COMPILE_OPTIONS}>)
+    target_link_options(${targetname} PRIVATE  $<$<BOOL:USE_SANITIZER>:${SANITIZER_LINK_OPTIONS}>)
     add_custom_target(
         x${targetname}
         COMMAND ${targetname}
@@ -297,17 +287,38 @@ if(XTENSOR_USE_OPENMP)
     target_compile_definitions(test_xtensor_lib PRIVATE XTENSOR_USE_OPENMP)
 endif()
 
+target_compile_options(test_xtensor_lib PRIVATE  $<$<BOOL:USE_SANITIZER>:${SANITIZER_COMPILE_OPTIONS}>)
+target_link_options(test_xtensor_lib PRIVATE  $<$<BOOL:USE_SANITIZER>:${SANITIZER_LINK_OPTIONS}>)
+
+# doctest's String union + MSan libc interceptors (strlen/strcmp) cause
+# false-positive use-of-uninitialized-value reports during reporter
+# registration and exception formatting. These cannot be suppressed at the
+# attribute level because MSan's libc interceptors check memory regardless
+# of calling-function attributes. The combined convenience binary therefore
+# opts out of MSan instrumentation so the xtest target can complete.
+# Individual per-test executables (test_xarray, test_xview, etc.) remain
+# fully instrumented and are the correct targets for MSan CI validation.
+if(USE_SANITIZER MATCHES "memory")
+  target_compile_options(test_xtensor_lib PRIVATE -fno-sanitize=memory)
+  target_link_options(test_xtensor_lib PRIVATE -fno-sanitize=memory)
+endif()
+
 target_include_directories(test_xtensor_lib PRIVATE ${XTENSOR_INCLUDE_DIR})
 target_link_libraries(test_xtensor_lib PRIVATE xtensor  doctest::doctest ${CMAKE_THREAD_LIBS_INIT})
 
-add_custom_target(xtest COMMAND test_xtensor_lib DEPENDS test_xtensor_lib)
+add_custom_target(
+  xtest
+  COMMAND $<TARGET_FILE:test_xtensor_lib>
+  DEPENDS test_xtensor_lib
+)
 add_test(NAME xtest COMMAND test_xtensor_lib)
 
 # Some files will be compiled twice, however compiling common files in a static
 # library and linking test_xtensor_lib with it removes half of the tests at
 # runtime.
-add_library(test_xtensor_core_lib ${COMMON_BASE} ${TEST_HEADERS} ${XTENSOR_HEADERS})
+add_library(test_xtensor_core_lib STATIC ${COMMON_BASE} ${TEST_HEADERS} ${XTENSOR_HEADERS})
 target_include_directories(test_xtensor_core_lib PRIVATE ${XTENSOR_INCLUDE_DIR})
 
 target_link_libraries(test_xtensor_core_lib PRIVATE xtensor doctest::doctest ${CMAKE_THREAD_LIBS_INIT})
+target_precompile_headers(test_xtensor_core_lib PRIVATE ${XTENSOR_HEADERS})
 add_custom_target(coverity COMMAND coverity_scan DEPENDS test_xtensor_core_lib)
